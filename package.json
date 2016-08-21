@@ -1,0 +1,30 @@
+{
+  "name": "listeverything",
+  "version": "1.0.0",
+  "description": "this is a website were people create lists",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schuyler4/listeverything.git"
+  },
+  "keywords": [
+    "list"
+  ],
+  "author": "Marek Newton",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/schuyler4/listeverything/issues"
+  },
+  "homepage": "https://github.com/schuyler4/listeverything#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0",
+    "mongodb": "^2.2.7",
+    "mongoose": "^4.5.9",
+    "nodemon": "^1.10.2"
+  }
+}
