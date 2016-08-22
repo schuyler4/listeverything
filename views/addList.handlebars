@@ -1,14 +1,23 @@
-<script src="./js/listInput.js"></script>
 <div class="container">
+  <h2>
+    Create a list
+  </h2>
+  <h4>
+    Rules
+  </h4>
+  <ul>
+    <li>Be nice to people with you lists</li>
+    <li>your list will stay forever</li>
+  </ul>
   <div class="form-group">
     <form action="addList" method="post" id="addListForm">
       <div id="inputs">
         <h4>list Title</h4>
         <input type="text" name="title" class="form-control"><br>
         <h4>optional(a discriptoin about your list)</h4>
-        <input type="text" name="about" class="form-control">
+        <textarea type="text" name="about" class="form-control"></textarea>
         <h4> add some starting Items </h4>
-        <input type="text" name"items" class="form-control">
+        <input type="text" name="items" class="form-control">
         <br>
       </div>
       <button type="button" id="listButton">Another Item</button>
@@ -16,3 +25,4 @@
     </form>
   </div>
 </div>
+Contact GitHub API Training Shop Blog About
