@@ -3,9 +3,7 @@ const express = require('express');
 module.exports = function(app) {
   const list = require('../models/list')
 
-  app.get('/', function(req, res) {
-    res.render('home');
-  });
+  app.get('/', list.home)
 
   app.get('/addList', function(req, res) {
     res.render('addList')
@@ -13,10 +11,10 @@ module.exports = function(app) {
 
   app.post('/addList', function(req, res) {
     title = req.body.title
-    description = req.body.description
+    about = req.body.about
     items = req.body.items
 
-    list.create(title, description, items, function(err, list) {
+    list.create(title, about, items, function(err, list) {
 
     })
     res.redirect('/');
@@ -28,13 +26,11 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/list/:id', function(req, res) {
-    list.get(req.params.id, function(err, data) {
-      res.render('list', {
-        title:data.title,
-        description:data.description,
-        items:data.items
-      });
-    });
-  });
+  app.get('/list/:id', list.get)
+  app.post('/like', list.like)
+  app.post('/dislike', list.dislike)
+
+  app.get('/editList/:id', list.getEdit)
+  app.post('/addItems', list.update)
+  app.post('/deleteItem', list.delete)
 }

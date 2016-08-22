@@ -1,0 +1,19 @@
+<script src="/js/listInput.js"></script>
+<div class="container">
+  <h1> {{title}} </h1>
+  <p>{{about}}</p>
+  <form action="/addItems" method="post">
+    <ul>
+      <div id="inputs">
+        {{#each items}}
+          <input type="text" name="items" value="{{this}}"></input><br>
+          <form action="/deleteItem" method="post">
+            <button type="submit">Delete</button>
+          </form>
+        {{/each}}
+      </div>
+    </ul>
+    <button type="submit">Submit</button>
+    <button id='listButton' type="button">add Something</buuton>
+  </form>
+</div>

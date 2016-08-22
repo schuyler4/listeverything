@@ -1,14 +1,18 @@
 <script src="./js/listInput.js"></script>
-<form action="addList" method="post" id="addListForm">
-  <div id="inputs">
-    <h4>A Title Fof Your List</h4>
-    <input type="text" name="title"><br>
-    <h4>optional(a discriptoin about your list)</h4>
-    <input type="text" name="description">
-    <h4> add some starting Items </h4>
-    <input type="text" name"item">
-    <br>
+<div class="container">
+  <div class="form-group">
+    <form action="addList" method="post" id="addListForm">
+      <div id="inputs">
+        <h4>list Title</h4>
+        <input type="text" name="title" class="form-control"><br>
+        <h4>optional(a discriptoin about your list)</h4>
+        <input type="text" name="about" class="form-control">
+        <h4> add some starting Items </h4>
+        <input type="text" name"items" class="form-control">
+        <br>
+      </div>
+      <button type="button" id="listButton">Another Item</button>
+      <input type="submit">
+    </form>
   </div>
-  <button type="button" id="listButton">Another Item</button>
-  <input type="submit">
-</form>
+</div>

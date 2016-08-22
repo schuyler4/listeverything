@@ -1,1 +1,17 @@
-<h1> this is a list </h1> 
+<h1> {{title}} </h1>
+<p>{{about}}</p>
+<ul>
+  {{#each items}}
+    <li>{{this}}</li>
+  {{/each}}
+</ul>
+<a href="/editList/{{id}}">
+  <button>Edit this list</button>
+</a>
+<h4>popularity: {{popularity}}</h4>
+<form action="/like" method="post">
+  <button type="submit">Like</button>
+</form>
+<form action="/dislike" method="post">
+  <button type="submit">Dislike</button>
+</form>
