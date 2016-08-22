@@ -1,9 +1,9 @@
 <div class="container">
   <h1> all of the lists </h1>
-  <ul>
+  <ul class="list-group">
     {{#each data}}
       <a href="/list/{{id}}">
-        <li> {{title}} </li>
+        <li class="list-group-item"> {{title}} </li>
       </a>
     {{/each}}
   </ul>
