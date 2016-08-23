@@ -2,6 +2,7 @@ const express = require('express');
 
 module.exports = function(app) {
   const list = require('../models/list')
+  const comment = require('../models/comments')
 
   app.get('/', list.home)
 
@@ -26,11 +27,12 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/list/:id', list.get)
-  app.post('/like', list.like)
-  app.post('/dislike', list.dislike)
+  app.get('/list/:id', list.get);
+  app.post('/like', list.like);
+  app.post('/dislike', list.dislike);
+  app.post('/comment', list.comment);
 
-  app.get('/editList/:id', list.getEdit)
-  app.post('/addItems', list.update)
-  app.post('/deleteItem', list.delete)
+  app.get('/editList/:id', list.getEdit);
+  app.post('/addItems', list.update);
+  app.post('/deleteItem', list.delete);
 }

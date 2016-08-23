@@ -1,13 +1,20 @@
 const mongoose = require('mongoose');
+const comments = require('../models/comments')
 
 const listSchema = mongoose.Schema({
   title: String,
   about: String,
   items: [String],
-  popularity: Number
+  popularity: Number,
+  comment: {
+    name: String,
+    content: String
+  }
 });
 
 const List = mongoose.model('List', listSchema)
+
+let id;
 
 exports.create = function(title, about, items) {
   let userList = new List({
@@ -19,13 +26,25 @@ exports.create = function(title, about, items) {
 
   userList.save(function(err, userList) {
     if (err) return console.error(err);
+    res.redirect('/list/' + id)
   })
+}
+
+exports.comment = function(req, res) {
+  let userComment = new List.comment ({
+    name: req.body.name,
+    content: req.body.content
+  });
+
+  userComment.save(function(err, save) {
+    if (err) return console.error(err);
+    res.redirect('/list/' + id)
+  });
 }
 
 exports.all = function(data) {
   List.find({}, data)
 }
-let id;
 
 exports.get = function(req, res) {
   id = req.params.id;
@@ -42,6 +61,7 @@ exports.get = function(req, res) {
         id:data.id
     });
   });
+
 }
 
 exports.like = function(req, res) {
@@ -110,7 +130,6 @@ exports.delete = function(req, res) {
 
 exports.home = function(req, res) {
   List.find({}).sort({'popularity':-1}).limit(10).exec(function(err, data) {
-    console.log(data)
     res.render('home',{
       id:data.id,
       title:data.title,

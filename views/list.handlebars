@@ -22,4 +22,14 @@
       <button type="submit" class="btn btn-primary">Dislike</button>
     </div>
   </form>
+  <form action="/comment" method="post">
+    <input type="text" name="name">
+    <textarea type="text" name="content">
+    </textarea>
+    <button type="submit">Submit Comment</button>
+  </form>
+  <div class="jumbotron">
+    <h5>{{name}}</h5>
+    <p>{{content}}</p>
+  </div>
  </div>
