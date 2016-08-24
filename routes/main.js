@@ -10,16 +10,7 @@ module.exports = function(app) {
     res.render('addList')
   });
 
-  app.post('/addList', function(req, res) {
-    title = req.body.title
-    about = req.body.about
-    items = req.body.items
-
-    list.create(title, about, items, function(err, list) {
-
-    })
-    res.redirect('/');
-  });
+  app.post('/addList', list.create);
 
   app.get('/listOflists', function(req, res) {
     list.all(function(err, data) {

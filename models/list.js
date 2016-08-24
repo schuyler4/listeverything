@@ -6,40 +6,40 @@ const listSchema = mongoose.Schema({
   about: String,
   items: [String],
   popularity: Number,
-  comment: {
+  comments: [{
     name: String,
     content: String
-  }
+  }]
 });
 
-const List = mongoose.model('List', listSchema)
+/*const commentSchema = mongoose.Schema({
+  name: String,
+  content: String
+})*/
+
+const List = mongoose.model('List', listSchema);
+//const comment = mongoose.model('comment', commentSchema);
 
 let id;
 
-exports.create = function(title, about, items) {
+exports.create = function(req, res) {
   let userList = new List({
-    title: title,
-    about: about,
-    items: items,
-    popularity: 1
+    title: req.body.title,
+    about: req.body.about,
+    items: req.body.items,
+    popularity: 1,
+    comments: {
+      name: "first guy",
+      content: "first"
+    }
   })
+
+  id = userList._id;
 
   userList.save(function(err, userList) {
     if (err) return console.error(err);
     res.redirect('/list/' + id)
   })
-}
-
-exports.comment = function(req, res) {
-  let userComment = new List.comment ({
-    name: req.body.name,
-    content: req.body.content
-  });
-
-  userComment.save(function(err, save) {
-    if (err) return console.error(err);
-    res.redirect('/list/' + id)
-  });
 }
 
 exports.all = function(data) {
@@ -58,8 +58,11 @@ exports.get = function(req, res) {
         about: data.about,
         items:data.items,
         popularity:data.popularity,
-        id:data.id
+        comments:data.comments
     });
+    for(i in data.comments) {
+      console.log("panda")
+    }
   });
 
 }
@@ -113,6 +116,21 @@ exports.update = function(req, res) {
       return console.error(err);
     else
       res.redirect("/list/"+id);
+  });
+}
+
+exports.comment = function(req, res) {
+  const query = {"_id":id};
+  let update = {$push:{'comments':({
+    name: req.body.name,
+    content: req.body.content
+  })}};
+  List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
+    if(err)
+      return console.error(err);
+    else {
+      res.redirect('/list/' + id)
+    }
   });
 }
 
