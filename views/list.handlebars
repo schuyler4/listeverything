@@ -23,12 +23,13 @@
     </div>
   </form>
   <form action="/comment" method="post">
-    <input type="text" name="name">
-    <textarea type="text" name="content">
+    <textarea type="text" name="comment">
     </textarea>
     <button type="submit">Submit Comment</button>
   </form>
   <div class="jumbotron">
-    <p>{{comments.content}}</p>
+    {{#each comments}}
+      <p>{{this}}</P>
+    {{/each}}
   </div>
  </div>

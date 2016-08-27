@@ -6,39 +6,66 @@ const listSchema = mongoose.Schema({
   about: String,
   items: [String],
   popularity: Number,
-  comments: [{
-    name: String,
-    content: String
-  }]
+  comments:[String]
 });
 
-/*const commentSchema = mongoose.Schema({
-  name: String,
-  content: String
-})*/
+/*listSchema.methods.findIfCreated = function(title) {
+  List.find({}, function(err, list) {
+    list.forEach(function(list) {
+      if(list.title == title) {
+        return true;
+        console.log("created")
+      }
+      else {
+        console.log("not created")
+        return false;
+      }
+    });
+  });
+}*/
+
+listSchema.validate(function (value, res) {
+    List.findOne({name: value}, 'id', function(err, user) {
+        if (err) return res(err);
+        if (user) return res(false);
+        res(true);
+    });
+}, 'already exists');
 
 const List = mongoose.model('List', listSchema);
-//const comment = mongoose.model('comment', commentSchema);
 
+/*function updateUser(user,cb){
+    List.find({name : user.name}, function (err, docs) {
+        if (docs.length){
+            //cb('Name exists already',null);
+            console.log("exists")
+            return false;
+        }else{
+            return true;
+            console.log("dosen't exist")
+        }
+    });
+}*/
+
+let title;
 let id;
 
 exports.create = function(req, res) {
+
   let userList = new List({
     title: req.body.title,
     about: req.body.about,
     items: req.body.items,
     popularity: 1,
-    comments: {
-      name: "first guy",
-      content: "first"
-    }
+    comments:[]
   })
 
-  id = userList._id;
-
+  userList.findIfCreated(userList.title)
   userList.save(function(err, userList) {
     if (err) return console.error(err);
-    res.redirect('/list/' + id)
+    title = userList.title;
+    id = userList.id;
+    res.redirect('/list/' + title + '/' + id)
   })
 }
 
@@ -47,24 +74,24 @@ exports.all = function(data) {
 }
 
 exports.get = function(req, res) {
+  title = req.params.title;
   id = req.params.id;
 
-  List.findById(id, function(err, data) {
-    if (err)
-      return console.error(err);
-    else
+  List.findById(id, function(err, list) {
+    if(err) {
+      console.error(err);
+    }
+    else {
+      console.log(id)
       res.render('list', {
-        title: data.title,
-        about: data.about,
-        items:data.items,
-        popularity:data.popularity,
-        comments:data.comments
-    });
-    for(i in data.comments) {
-      console.log("panda")
+        title: list.title,
+        about: list.about,
+        items: list.items,
+        popularity: list.popularity,
+        comments: list.comments
+      });
     }
   });
-
 }
 
 exports.like = function(req, res) {
@@ -75,7 +102,7 @@ exports.like = function(req, res) {
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err)
       return console.error(err);
-    res.redirect('/list/' + id)
+    res.redirect('/list/' + title + '/' + id)
   });
 }
 
@@ -87,7 +114,7 @@ exports.dislike = function(req, res) {
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err)
       return console.error(err);
-    res.redirect('/list/' + id)
+    res.redirect('/list/' + title + '/' + id)
   });
 }
 
@@ -120,16 +147,14 @@ exports.update = function(req, res) {
 }
 
 exports.comment = function(req, res) {
-  const query = {"_id":id};
-  let update = {$push:{'comments':({
-    name: req.body.name,
-    content: req.body.content
-  })}};
-  List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
-    if(err)
-      return console.error(err);
+  let query = {"_id":id};
+  let update = {$push:{comments:req.body.comment}};
+  List.findOneAndUpdate(query, update, {new: true}, function(err, comment) {
+    if(err)  {
+        console.error(err);
+    }
     else {
-      res.redirect('/list/' + id)
+      res.redirect("/list/" + title + "/" + id)
     }
   });
 }

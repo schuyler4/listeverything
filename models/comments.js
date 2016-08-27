@@ -1,5 +1,46 @@
 /*const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+
+const list = require('../models/comments')
+
+const commentSchema = mongoose.Schema({
+  name: String,
+  content: String,
+});
+
+exports.comments = mongoose.model('comments', commentSchema);
+const comments = mongoose.model('comments', commentSchema);
+
+let id
+
+exports.get = function(req, res) {
+  let id = req.body.id;
+  comments.findById(id, function(err, data) {
+    if (err) {
+      return console.error(err);
+    }
+    else {
+      //console.log(data)
+      //res.render({name: data.name, content:data.content});
+      console.log(data)
+    }
+  });
+}
+
+exports.create = function(req, res) {
+  id = req.body.id
+  let userComment = new comments({
+    content: req.body.comment
+  })
+  userComment.save(function(err, comment) {
+    if (err) return console.error(err);
+    res.redirect('/');
+  });
+
+}
+
+
+/*
 const list = require('../models/list')
 
 const commentSchema = mongoose.Schema({
@@ -8,8 +49,6 @@ const commentSchema = mongoose.Schema({
   pageid: String,
   date: { type : Date, default: Date.now }
 });
-
-const comment = mongoose.model('comment', commentSchema);
 
 let title;
 
