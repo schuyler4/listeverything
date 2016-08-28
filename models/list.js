@@ -1,51 +1,39 @@
 const mongoose = require('mongoose');
-const comments = require('../models/comments')
+const ValidationError = mongoose.Error.ValidationError;
+const ValidatorError  = mongoose.Error.ValidatorError;
+const comments = require('../models/comments');
 
 const listSchema = mongoose.Schema({
-  title: String,
+  title: {
+    type: String,
+  },
   about: String,
-  items: [String],
+  items: {
+    type:[String],
+    required: [true, 'Whats a list without items']
+  },
   popularity: Number,
   comments:[String]
 });
 
-/*listSchema.methods.findIfCreated = function(title) {
-  List.find({}, function(err, list) {
-    list.forEach(function(list) {
-      if(list.title == title) {
-        return true;
-        console.log("created")
-      }
-      else {
-        console.log("not created")
-        return false;
-      }
-    });
-  });
-}*/
-
-listSchema.validate(function (value, res) {
-    List.findOne({name: value}, 'id', function(err, user) {
-        if (err) return res(err);
-        if (user) return res(false);
-        res(true);
-    });
-}, 'already exists');
-
 const List = mongoose.model('List', listSchema);
 
-/*function updateUser(user,cb){
-    List.find({name : user.name}, function (err, docs) {
-        if (docs.length){
-            //cb('Name exists already',null);
-            console.log("exists")
-            return false;
-        }else{
-            return true;
-            console.log("dosen't exist")
-        }
-    });
-}*/
+List.schema.pre("save", function(next) {
+  var self = this;
+
+  List.findOne({title : this.title}, 'title', function(err, results) {
+      if(err) {
+          next(err);
+      } else if(results) {
+          console.warn("title already used");
+          self.invalidate("title", "title has already been used");
+          console.log(self.invalidate)
+          next(new Error("title has already been used"));
+      } else {
+          next();
+      }
+  });
+});
 
 let title;
 let id;
@@ -60,13 +48,25 @@ exports.create = function(req, res) {
     comments:[]
   })
 
-  userList.findIfCreated(userList.title)
   userList.save(function(err, userList) {
-    if (err) return console.error(err);
-    title = userList.title;
-    id = userList.id;
-    res.redirect('/list/' + title + '/' + id)
-  })
+    if (err) {
+      console.error(err);
+    } else {
+      title = userList.title;
+      id = userList.id;
+      res.redirect('/list/' + title + '/' + id);
+    }
+  });
+}
+
+exports.getAdd = function(req, res) {
+    if(session) {
+      console.log(session.title);
+      console.log(session.about);
+      console.log(session.items);
+      res.render('addList',{title: session.title, about: session.about,
+        items: session.items})
+    }
 }
 
 exports.all = function(data) {
@@ -82,7 +82,7 @@ exports.get = function(req, res) {
       console.error(err);
     }
     else {
-      console.log(id)
+      console.log("saved sucksessfully")
       res.render('list', {
         title: list.title,
         about: list.about,

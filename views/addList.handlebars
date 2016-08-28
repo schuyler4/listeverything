@@ -14,11 +14,20 @@
     <form action="addList" method="post" id="addListForm">
       <div id="inputs">
         <h4>list Title</h4>
-        <input type="text" name="title" class="form-control"><br>
+        <input type="text" name="title" class="form-control" value="{{title}}">
+        <br>
         <h4>optional(a discriptoin about your list)</h4>
-        <textarea type="text" name="about" class="form-control"></textarea>
+        <textarea type="text" name="about" class="form-control">{{about}}
+        </textarea>
         <h4> add some starting Items </h4>
-        <input type="text" name="items" class="form-control">
+        {{# if items}}
+          {{#each}}
+            <input type="text" name="items" class="form-control"
+            value="{{items}}">
+          {{/each}}
+        {{else}}
+          <input type="text" name="items" class="form-control">
+        {{/if}}
         <br>
       </div>
       <button type="button" id="listButton">Another Item</button>
