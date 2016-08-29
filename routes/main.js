@@ -6,15 +6,9 @@ module.exports = function(app) {
 
   app.get('/', list.home)
 
-  app.get('/flash', function(req, res) {
-    req.flash('info', 'Flash is back!')
-    res.redirect('/');
-  });
+  app.get('/titleWarning', list.warning);
 
-  app.get('/addList', function(req, res, next) {
-    res.render('addList')
-    next();
-  },list.getAdd);
+  app.get('/addList', list.addPage);
   app.post('/addList', list.create);
 
   app.get('/listOflists', function(req, res) {

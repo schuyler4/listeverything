@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const ValidationError = mongoose.Error.ValidationError;
 const ValidatorError  = mongoose.Error.ValidatorError;
 const comments = require('../models/comments');
+const text = require('../text')
 
 const listSchema = mongoose.Schema({
   title: {
@@ -18,27 +19,39 @@ const listSchema = mongoose.Schema({
 
 const List = mongoose.model('List', listSchema);
 
-List.schema.pre("save", function(next) {
-  var self = this;
+let used = false;
 
-  List.findOne({title : this.title}, 'title', function(err, results) {
-      if(err) {
-          next(err);
-      } else if(results) {
-          console.warn("title already used");
-          self.invalidate("title", "title has already been used");
-          console.log(self.invalidate)
-          next(new Error("title has already been used"));
-      } else {
-          next();
-      }
-  });
-});
+function redirect(req, res) {
+  res.redirect('/addList')
+}
 
 let title;
 let id;
+let session;
+
+exports.warning = function(req, res) {
+  req.flash('titleWarning', text.textWarning)
+  res.redirect('/addList');
+}
+
+exports.addPage = function(req, res) {
+  if(session) {
+    res.render('addList',{title: session.title, about: session.about,
+      items: session.items, warning: req.flash('titleWarning')});
+    console.log(req.flash('titleWarning'));
+    console.log(session.items);
+  }
+  else {
+    res.render('addList');
+  }
+}
 
 exports.create = function(req, res) {
+
+  session = req.session;
+  session.title = req.body.title;
+  session.about = req.body.about;
+  session.items = req.body.items;
 
   let userList = new List({
     title: req.body.title,
@@ -48,25 +61,26 @@ exports.create = function(req, res) {
     comments:[]
   })
 
-  userList.save(function(err, userList) {
-    if (err) {
+  List.findOne({title: userList.title}, 'title', function(err, title) {
+    if(err) {
       console.error(err);
-    } else {
-      title = userList.title;
-      id = userList.id;
-      res.redirect('/list/' + title + '/' + id);
+    }
+    else if(title) {
+      res.redirect('/addList')
+    }
+    else {
+      userList.save(function(err, userList) {
+        if (err) {
+          console.error(err);
+        } else {
+          req.session.destroy();
+          title = userList.title;
+          id = userList.id;
+          res.redirect('/list/' + title + '/' + id);
+        }
+      });
     }
   });
-}
-
-exports.getAdd = function(req, res) {
-    if(session) {
-      console.log(session.title);
-      console.log(session.about);
-      console.log(session.items);
-      res.render('addList',{title: session.title, about: session.about,
-        items: session.items})
-    }
 }
 
 exports.all = function(data) {
@@ -82,7 +96,6 @@ exports.get = function(req, res) {
       console.error(err);
     }
     else {
-      console.log("saved sucksessfully")
       res.render('list', {
         title: list.title,
         about: list.about,
