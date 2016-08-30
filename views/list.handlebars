@@ -1,21 +1,35 @@
+<script src="/js/listFormating.js"></script>
 <div class="container">
   <h1> {{title}} </h1>
   <p>{{about}}</p>
-  <div class="jumbotron">
-    <ul>
+  <div class="jumbotron" id="formating">
+    <h3>formating</h3>
+    <select class="form-control" id="typeSelector">
+      <option id="bullets">bullets</option>
+      <option id="numbered">numbered</option>
+    </select>
+    <select class="form-control" id="typeSelector">
+      <option id="alfabetical">alfabetical order</option>
+      <option id="newestTOoldest">newest to oldest</option>
+      <option id="oldestTonewest">oldest to newest</option>
+    </select>
+  </div>
+  <div class="jumbotron" id="optionDiv">
+    <ul id="mainList">
       {{#each items}}
         <li>{{this}}</li>
       {{/each}}
     </ul>
+    <form action="/addItems" method="post">
+      <input type="newItems" name="text">
+      <input type="submit">
+    </form>
   </div>
-  <a href="/editList/{{id}}">
-    <button>Edit this list</button>
-  </a>
   <h4>popularity: {{popularity}}</h4>
   <form action="/like" method="post">
-  <div class="container">
-    <button type="submit" class="btn btn-primary">Like</button>
-  </div>
+    <div class="container">
+      <button type="submit" class="btn btn-primary">Dislike</button>
+    </div>
   </form>
   <form action="/dislike" method="post">
     <div class="container">

@@ -10,9 +10,11 @@
     <li>Be nice to people with your lists</li>
     <li>Your list will stay forever</li>
   </ul>
-  <div class="alert alert-danger">
-    <strong>Warning</strong>{{warning}}
-  </div>
+  {{# if warning}}
+    <div class="alert alert-danger">
+      <strong>Warning</strong>{{warning}}
+    </div>
+  {{/if}}
   <div class="form-group">
     <form action="addList" method="post" id="addListForm">
       <div id="inputs">

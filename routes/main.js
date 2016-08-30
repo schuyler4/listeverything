@@ -11,18 +11,12 @@ module.exports = function(app) {
   app.get('/addList', list.addPage);
   app.post('/addList', list.create);
 
-  app.get('/listOflists', function(req, res) {
-    list.all(function(err, data) {
-      res.render('listOflists', {data:data,title:data.title})
-    });
-  });
+  app.get('/listOflists', list.listOflists);
 
   app.get('/list/:title/:id', list.get);
   app.post('/like', list.like);
   app.post('/dislike', list.dislike);
-  app.post('/comment', list.comment)
-
-  app.get('/editList/:title/:id', list.getEdit);
+  app.post('/comment', list.comment);
   app.post('/addItems', list.update);
   app.post('/deleteItem', list.delete);
 }

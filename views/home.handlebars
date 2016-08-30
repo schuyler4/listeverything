@@ -2,11 +2,12 @@
   <h3>Top Rated Lists</h3>
   <ul class="list-group">
     {{#each data}}
-      <li class="list-group-item">
-        <span class="badge">{{popularity}}</span>
-        {{title}}
-      </li>
+      <a href="/list/{{title}}/{{id}}">
+        <li class="list-group-item">
+          <span class="badge">{{popularity}}</span>
+          {{title}}
+        </li>
+      </a>
     {{/each}}
     </ul>
-
 </div>

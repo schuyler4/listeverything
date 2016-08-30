@@ -1,6 +1,14 @@
+<script src="./js/listSearch.js">
+</script>
+<div id="searchBox" class="container">
+  <input id="search">
+</div>
 <div class="container">
   <h1> all of the lists </h1>
-  <ul class="list-group">
+  <div class="form-group">
+  <label for="sel1">Select list:</label>
+</div>
+  <ul class="list-group" id="listOflists">
     {{#each data}}
       <a href="/list/{{title}}/{{_id}}">
         <li class="list-group-item"> {{title}} </li>

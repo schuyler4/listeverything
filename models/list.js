@@ -11,7 +11,7 @@ const listSchema = mongoose.Schema({
   about: String,
   items: {
     type:[String],
-    required: [true, 'Whats a list without items']
+    date: Date,
   },
   popularity: Number,
   comments:[String]
@@ -37,7 +37,7 @@ exports.warning = function(req, res) {
 exports.addPage = function(req, res) {
   if(session) {
     res.render('addList',{title: session.title, about: session.about,
-      items: session.items, warning: req.flash('titleWarning')});
+      items: session.items, warning: text.textWarning});
     console.log(req.flash('titleWarning'));
     console.log(session.items);
   }
@@ -83,8 +83,34 @@ exports.create = function(req, res) {
   });
 }
 
-exports.all = function(data) {
-  List.find({}, data)
+exports.listOflists = function(req, res) {
+
+  buildResultSet = function(docs) {
+    var result = [];
+    for(var object in docs){
+      result.push(docs[object]);
+    }
+    return result;
+  }
+
+  var regex = new RegExp(req.query["term"], 'i');
+  var query = List.find({fullname: regex}, { 'fullname': 1 })
+    .sort({"updated_at":-1}).sort({"created_at":-1}).limit(20);
+
+  query.exec(function(err, listes) {
+     if (!err) {
+        let result = buildResultSet(listes);
+        List.find({},function(err, data) {
+          res.render('listOflists', {data:data,title:data.title,
+            result:result});
+        });
+        console.log(result);
+     } else {
+        res.send(JSON.stringify(err), {
+           'Content-Type': 'application/json'
+        }, 404);
+     }
+  });
 }
 
 exports.get = function(req, res) {
@@ -101,9 +127,14 @@ exports.get = function(req, res) {
         about: list.about,
         items: list.items,
         popularity: list.popularity,
-        comments: list.comments
+        comments: list.comments,
+        id:list.id
       });
     }
+  });
+
+  List.findOne({}, {}, { sort: { 'created_at' : -1 } }, function(err, post) {
+    console.log( post );
   });
 }
 
@@ -131,31 +162,19 @@ exports.dislike = function(req, res) {
   });
 }
 
-exports.getEdit = function(req, res) {
-  id = req.params.id
-
-  List.findById(id, function(err, data) {
-    if (err)
-      return console.error(err);
-    else
-      res.render('editList', {
-        title: data.title,
-        about: data.about,
-        items:data.items,
-        id:data.id
-      });
-  });
-}
-
 exports.update = function(req, res) {
   let query = {"_id":id};
-  let update = {$set:{items:req.body.items}};
+  let update = {$set:{items:req.body.newItems}};
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
-    if(err)
+    if(err) {
+      console.log("panda")
       return console.error(err);
-    else
-      res.redirect("/list/"+id);
+    }
+    else {
+      console.log("id not working")
+      res.redirect("/list/"+title+'/'+id);
+    }
   });
 }
 
