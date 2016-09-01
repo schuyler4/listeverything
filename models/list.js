@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const async = require('async');
 const ValidationError = mongoose.Error.ValidationError;
 const ValidatorError  = mongoose.Error.ValidatorError;
 const comments = require('../models/comments');
@@ -9,10 +10,7 @@ const listSchema = mongoose.Schema({
     type: String,
   },
   about: String,
-  items: {
-    type:[String],
-    date: Date,
-  },
+  items: [String],
   popularity: Number,
   comments:[String]
 });
@@ -28,11 +26,6 @@ function redirect(req, res) {
 let title;
 let id;
 let session;
-
-exports.warning = function(req, res) {
-  req.flash('titleWarning', text.textWarning)
-  res.redirect('/addList');
-}
 
 exports.addPage = function(req, res) {
   if(session) {
@@ -63,6 +56,7 @@ exports.create = function(req, res) {
 
   List.findOne({title: userList.title}, 'title', function(err, title) {
     if(err) {
+      res.redirect('500');
       console.error(err);
     }
     else if(title) {
@@ -71,6 +65,7 @@ exports.create = function(req, res) {
     else {
       userList.save(function(err, userList) {
         if (err) {
+          res.redirect('500');
           console.error(err);
         } else {
           req.session.destroy();
@@ -85,32 +80,46 @@ exports.create = function(req, res) {
 
 exports.listOflists = function(req, res) {
 
-  buildResultSet = function(docs) {
-    var result = [];
-    for(var object in docs){
-      result.push(docs[object]);
+  List.find({}, function(err, all) {
+    if(err) {
+      console.err('err')
+      res.redirect('/500')
     }
-    return result;
-  }
-
-  var regex = new RegExp(req.query["term"], 'i');
-  var query = List.find({fullname: regex}, { 'fullname': 1 })
-    .sort({"updated_at":-1}).sort({"created_at":-1}).limit(20);
-
-  query.exec(function(err, listes) {
-     if (!err) {
-        let result = buildResultSet(listes);
-        List.find({},function(err, data) {
-          res.render('listOflists', {data:data,title:data.title,
-            result:result});
-        });
-        console.log(result);
-     } else {
-        res.send(JSON.stringify(err), {
-           'Content-Type': 'application/json'
-        }, 404);
-     }
+    else {
+      res.render('listOflists',{
+        data:all,
+        title:all.title,
+      })
+    }
   });
+}
+let searchSession;
+
+exports.search = function(req, res) {
+  searchSession = req.session;
+  searchSession.title = [];
+  searchSession.itemId = [];
+
+  let search = req.body.search;
+
+  List.find({'title':search}, function(err, search) {
+    if(err) {
+      console.error(err);
+    }
+    else {
+      for(let i = 0;i < search.length;i++) {
+        console.log("panda")
+        searchSession.title.push(search[i].title);
+        //searchSession.itemId.push(search[i]._id);
+        console.log(search[i].id);
+      }
+      res.redirect('/listSearch');
+    }
+  });
+}
+
+exports.searchFound = function(req, res) {
+  res.render('search', {title:searchSession.title,id:searchSession.itemId});
 }
 
 exports.get = function(req, res) {
@@ -119,6 +128,7 @@ exports.get = function(req, res) {
 
   List.findById(id, function(err, list) {
     if(err) {
+      res.redirect('500');
       console.error(err);
     }
     else {
@@ -130,11 +140,16 @@ exports.get = function(req, res) {
         comments: list.comments,
         id:list.id
       });
+      const listItems = list.items;
+      async.forEach(listItems, function(err, listItems) {
+        if(err) {
+          console.error(err);
+        }
+        else {
+          console.log(listItems);
+        }
+      });
     }
-  });
-
-  List.findOne({}, {}, { sort: { 'created_at' : -1 } }, function(err, post) {
-    console.log( post );
   });
 }
 
@@ -163,16 +178,17 @@ exports.dislike = function(req, res) {
 }
 
 exports.update = function(req, res) {
-  let query = {"_id":id};
-  let update = {$set:{items:req.body.newItems}};
+
+  let query = {"title":title};
+  let update = {$push:{items:req.body.newItems}};
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err) {
-      console.log("panda")
       return console.error(err);
     }
     else {
-      console.log("id not working")
+      console.log(id);
+      console.log(title);
       res.redirect("/list/"+title+'/'+id);
     }
   });

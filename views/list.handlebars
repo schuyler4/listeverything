@@ -8,20 +8,20 @@
       <option id="bullets">bullets</option>
       <option id="numbered">numbered</option>
     </select>
-    <select class="form-control" id="typeSelector">
+    <select class="form-control" id="arrangeSelector">
+      <option id="oldestToNewest">oldest to newest</option>
       <option id="alfabetical">alfabetical order</option>
       <option id="newestTOoldest">newest to oldest</option>
-      <option id="oldestTonewest">oldest to newest</option>
     </select>
   </div>
   <div class="jumbotron" id="optionDiv">
     <ul id="mainList">
       {{#each items}}
-        <li>{{this}}</li>
+        <h2><li>{{this}}</li></h2>
       {{/each}}
     </ul>
     <form action="/addItems" method="post">
-      <input type="newItems" name="text">
+      <input type="text" name="newItems">
       <input type="submit">
     </form>
   </div>

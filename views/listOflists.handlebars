@@ -1,7 +1,10 @@
 <script src="./js/listSearch.js">
 </script>
 <div id="searchBox" class="container">
-  <input id="search">
+  <form action="/listOflists" method="post">
+    <input type='text' name='search' id="search">
+    <input type="submit">
+  </form>
 </div>
 <div class="container">
   <h1> all of the lists </h1>
