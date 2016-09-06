@@ -2,7 +2,7 @@
 </script>
 <div id="searchBox" class="container">
   <form action="/listOflists" method="post">
-    <input type='text' name='search' id="search">
+    <input type='text' name='search' id="search" value="{{search}}">
     <input type="submit">
   </form>
 </div>
@@ -11,6 +11,7 @@
   <div class="form-group">
   <label for="sel1">Select list:</label>
 </div>
+  {{# if data}}
   <ul class="list-group" id="listOflists">
     {{#each data}}
       <a href="/list/{{title}}/{{_id}}">
@@ -18,4 +19,7 @@
       </a>
     {{/each}}
   </ul>
+  {{else}}
+  <p>dident find enything</p>
+  {{/if}}
 </div>

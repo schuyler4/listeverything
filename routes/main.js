@@ -14,15 +14,14 @@ module.exports = function(app) {
   app.post('/addList', list.create);
 
   app.get('/listOflists', list.listOflists);
-  app.post('/listOflists', list.search);
-  app.get('/listSearch', list.searchFound);
+  app.post('/listOflists', list.listOflists);
 
   app.get('/list/:title/:id', list.get);
   app.post('/like', list.like);
   app.post('/dislike', list.dislike);
   app.post('/comment', list.comment);
   app.post('/addItems', list.update);
-  app.post('/deleteItem', list.delete);
+  //app.post('/deleteItem', list.delete);
 
   app.get('*', function(req, res){
     res.render('404');

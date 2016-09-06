@@ -21,22 +21,26 @@
       {{/each}}
     </ul>
     <form action="/addItems" method="post">
+      <input type='hidden' name="id" value="{{id}}">
       <input type="text" name="newItems">
       <input type="submit">
     </form>
   </div>
   <h4>popularity: {{popularity}}</h4>
   <form action="/like" method="post">
+    <input type='hidden' name="id" value="{{id}}">
     <div class="container">
-      <button type="submit" class="btn btn-primary">Dislike</button>
+      <button type="submit" class="btn btn-primary">Like</button>
     </div>
   </form>
   <form action="/dislike" method="post">
+    <input type='hidden' name="id" value="{{id}}">
     <div class="container">
       <button type="submit" class="btn btn-primary">Dislike</button>
     </div>
   </form>
   <form action="/comment" method="post">
+    <input type='hidden' name="id" value="{{id}}">
     <textarea type="text" name="comment">
     </textarea>
     <button type="submit">Submit Comment</button>

@@ -23,8 +23,6 @@ function redirect(req, res) {
   res.redirect('/addList')
 }
 
-let title;
-let id;
 let session;
 
 exports.addPage = function(req, res) {
@@ -79,8 +77,14 @@ exports.create = function(req, res) {
 }
 
 exports.listOflists = function(req, res) {
+  let query = {}
+  let search = req.body.search;
 
-  List.find({}, function(err, all) {
+  if(req.body.search) {
+    query = {'title': new RegExp(search, "i")}
+  }
+
+  List.find(query, function(err, all) {
     if(err) {
       console.err('err')
       res.redirect('/500')
@@ -89,42 +93,19 @@ exports.listOflists = function(req, res) {
       res.render('listOflists',{
         data:all,
         title:all.title,
+        search: search
       })
-    }
-  });
-}
-let searchSession;
-
-exports.search = function(req, res) {
-  searchSession = req.session;
-  searchSession.title = [];
-  searchSession.itemId = [];
-
-  let search = req.body.search;
-
-  List.find({'title':search}, function(err, search) {
-    if(err) {
-      console.error(err);
-    }
-    else {
-      for(let i = 0;i < search.length;i++) {
-        console.log("panda")
-        searchSession.title.push(search[i].title);
-        //searchSession.itemId.push(search[i]._id);
-        console.log(search[i].id);
-      }
-      res.redirect('/listSearch');
     }
   });
 }
 
 exports.searchFound = function(req, res) {
-  res.render('search', {title:searchSession.title,id:searchSession.itemId});
+  res.render('search');
 }
 
 exports.get = function(req, res) {
-  title = req.params.title;
-  id = req.params.id;
+  let title = req.params.title;
+  let id = req.params.id;
 
   List.findById(id, function(err, list) {
     if(err) {
@@ -154,18 +135,21 @@ exports.get = function(req, res) {
 }
 
 exports.like = function(req, res) {
-
+  let id = req.body.id;
+  console.log(id);
+  console.log("panda");
   let query = {"_id":id};
   let update ={$inc:{popularity:1}};
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err)
       return console.error(err);
-    res.redirect('/list/' + title + '/' + id)
+    res.redirect('/list/'+ update.title + '/'+ id);
   });
 }
 
 exports.dislike = function(req, res) {
+  let id = req.body.id;
 
   let query = {"_id":id};
   let update ={$inc:{popularity:-1}};
@@ -173,13 +157,17 @@ exports.dislike = function(req, res) {
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err)
       return console.error(err);
-    res.redirect('/list/' + title + '/' + id)
+    res.redirect('/list/' + update.title + '/' + id)
   });
 }
 
 exports.update = function(req, res) {
+  let title = req.body.title;
+  let id = req.body.id;
+  console.log(id);
+  console.log("panda");
 
-  let query = {"title":title};
+  let query = {"_id":id};
   let update = {$push:{items:req.body.newItems}};
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
@@ -187,14 +175,17 @@ exports.update = function(req, res) {
       return console.error(err);
     }
     else {
-      console.log(id);
-      console.log(title);
+      console.log("update");
+      //console.log(id);
+      //console.log(title);
       res.redirect("/list/"+title+'/'+id);
     }
   });
 }
 
 exports.comment = function(req, res) {
+  let id = req.body.id;
+
   let query = {"_id":id};
   let update = {$push:{comments:req.body.comment}};
   List.findOneAndUpdate(query, update, {new: true}, function(err, comment) {
@@ -202,12 +193,14 @@ exports.comment = function(req, res) {
         console.error(err);
     }
     else {
-      res.redirect("/list/" + title + "/" + id)
+      res.redirect("/list/" + comment.title + '/' +id)
     }
   });
 }
 
-exports.delete = function(req, res) {
+/*exports.delete = function(req, res) {
+
+
   let query = {"_id":id};
   let update = {$pull:{'items':{title:"test title"}}}
   List.findOneAndUpdate(query, update, {new: true}, function(err, remove) {
@@ -217,7 +210,7 @@ exports.delete = function(req, res) {
       res.redirect("/list/"+id)
     }
   })
-}
+}*/
 
 exports.home = function(req, res) {
   List.find({}).sort({'popularity':-1}).limit(10).exec(function(err, data) {
