@@ -144,6 +144,7 @@ exports.like = function(req, res) {
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err)
       return console.error(err);
+    //console.log(update);
     res.redirect('/list/'+ update.title + '/'+ id);
   });
 }
@@ -157,16 +158,13 @@ exports.dislike = function(req, res) {
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err)
       return console.error(err);
-    res.redirect('/list/' + update.title + '/' + id)
+    res.redirect('/list/' + update.title + '/' + id);
   });
 }
 
 exports.update = function(req, res) {
-  let title = req.body.title;
   let id = req.body.id;
   console.log(id);
-  console.log("panda");
-
   let query = {"_id":id};
   let update = {$push:{items:req.body.newItems}};
 
@@ -174,27 +172,25 @@ exports.update = function(req, res) {
     if(err) {
       return console.error(err);
     }
-    else {
-      console.log("update");
-      //console.log(id);
-      //console.log(title);
-      res.redirect("/list/"+title+'/'+id);
-    }
+    res.redirect("/list/"+update.title+'/'+id);
   });
 }
 
 exports.comment = function(req, res) {
   let id = req.body.id;
+  let comment = req.body.comment;
+  console.log(id);
 
   let query = {"_id":id};
   let update = {$push:{comments:req.body.comment}};
-  List.findOneAndUpdate(query, update, {new: true}, function(err, comment) {
+  console.log(update);
+  List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err)  {
-        console.error(err);
+        return console.error(err);
     }
-    else {
-      res.redirect("/list/" + comment.title + '/' +id)
-    }
+    console.log()
+    res.redirect("/list/" + update.title + '/' +id);
+    //res.redirect('/');
   });
 }
 

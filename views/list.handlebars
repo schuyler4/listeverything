@@ -1,8 +1,7 @@
-<script src="/js/listFormating.js"></script>
 <div class="container">
   <h1> {{title}} </h1>
   <p>{{about}}</p>
-  <div class="jumbotron" id="formating">
+  <div id="formating">
     <h3>formating</h3>
     <select class="form-control" id="typeSelector">
       <option id="bullets">bullets</option>
@@ -20,34 +19,37 @@
         <h2><li>{{this}}</li></h2>
       {{/each}}
     </ul>
-    <form action="/addItems" method="post">
-      <input type='hidden' name="id" value="{{id}}">
-      <input type="text" name="newItems">
+    <!--<form action="/addItems" method="post">-->
+    <form id="update">
+      <input type='hidden' name="id" value="{{id}}" id="updateid">
+      <input type="text" name="newItems" id="newItems">
       <input type="submit">
     </form>
   </div>
-  <h4>popularity: {{popularity}}</h4>
-  <form action="/like" method="post">
-    <input type='hidden' name="id" value="{{id}}">
+  <h4>popularity: <span id="popularity">{{popularity}}</span></h4>
+  <form id="like">
+    <input type='hidden' name="id" value="{{id}}" id="likeidInput">
     <div class="container">
       <button type="submit" class="btn btn-primary">Like</button>
     </div>
   </form>
-  <form action="/dislike" method="post">
-    <input type='hidden' name="id" value="{{id}}">
+  <form id="dislike">
+    <input type='hidden' name="id" value="{{id}}" id="dislikeidInput">
     <div class="container">
       <button type="submit" class="btn btn-primary">Dislike</button>
     </div>
   </form>
-  <form action="/comment" method="post">
-    <input type='hidden' name="id" value="{{id}}">
-    <textarea type="text" name="comment">
+  <form id="comment">
+    <input type='hidden' name="id" value="{{id}}" id="commentid">
+    <textarea type="text" name="comment" id="thecomment">
     </textarea>
     <button type="submit">Submit Comment</button>
   </form>
-  <div class="jumbotron">
+  <div class="jumbotron" id="commentBox">
     {{#each comments}}
-      <p>{{this}}</P>
+      <p>{{this}}</p>
     {{/each}}
   </div>
  </div>
+ <script src="/js/listFormating.js"></script>
+ <script src="/js/actions.js"></script>

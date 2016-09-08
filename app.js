@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser')
 const flash = require('connect-flash');
 const express = require('express');
 const app = express();
+app.disable('x-powered-by');
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
