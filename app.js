@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 const flash = require('connect-flash');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const express = require('express');
 const app = express();
 app.disable('x-powered-by');
@@ -34,6 +36,8 @@ app.use(session({
   saveUninitialized: true,
 }));
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 
 require('./routes/main')(app);
 

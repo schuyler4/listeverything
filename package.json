@@ -30,7 +30,11 @@
     "express-handlebars": "^3.0.0",
     "mongodb": "^2.2.7",
     "mongoose": "^4.5.9",
-    "nodemon": "^1.10.2"
+    "nodemon": "^1.10.2",
+    "passport": "^0.3.2",
+    "passport-google": "^0.3.0",
+    "passport-local": "^1.0.0",
+    "password-hash": "^1.2.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
