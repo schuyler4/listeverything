@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const flash = require('connect-flash');
 
 module.exports = function(app) {
   const list = require('../models/list')
@@ -24,28 +25,28 @@ module.exports = function(app) {
   app.post('/dislike', list.dislike);
   app.post('/comment', list.comment);
   app.post('/addItems', list.update);
-  //app.post('/deleteItem', list.delete);
-  app.get('/deleteItems', user.isLoggedIn, function(req, res) {
-    console.log("u are logged in");
-    res.send('delete items page');
-  });
 
-  app.get('/login', function(req, res) {
-    res.render('login');
-  });
-  app.post('/login',
-  passport.authenticate('local', { failureRedirect: '/login' })
-  ,user.login);
-  app.get('/loginFailure', function(req, res, next) {
-    res.send('failed');
-  });
-  app.get('/loginSuccess', function(req, res, next) {
-    res.send('passed');
-  });
-  app.get('/signUp', function(req, res) {
-    res.render('signup');
-  });
-  app.post('/signup', user.signup);
+  app.get('/deleteItems/:title/:id', user.isLoggedIn, list.getDelete);
+  app.post('/delete', list.delete);
+
+  app.get('/login', user.login);
+  app.post('/login', passport.authenticate('login', {
+    successRedirect:'/',
+    failureRedirect:'/login',
+    failureFlash: true
+  }));
+  app.get('/logout', function(req, res) {
+    if(user.isLoggedIn) {
+      req.logout();
+    }
+    res.redirect('/');
+  })
+  app.get('/signUp', user.signup);
+  app.post('/signup', passport.authenticate('signup', {
+    successRedirect: '/',
+    failureRedirect: '/signup',
+    failureFlash: true,
+  }));
 
   app.get('*', function(req, res){
     res.render('404');

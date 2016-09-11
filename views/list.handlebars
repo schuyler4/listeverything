@@ -1,59 +1,47 @@
 <div class="container">
-  <h1> {{title}} </h1>
-  <p>{{about}}</p>
-  <div id="formating">
-    <h3>formating</h3>
+  <div class="jumbotron" id="optionDiv">
+    <h1> {{title}} </h1>
+    <p>{{about}}</p>
     <select class="form-control" id="typeSelector">
       <option id="bullets">bullets</option>
       <option id="numbered">numbered</option>
     </select>
-    <select class="form-control" id="arrangeSelector">
-      <option id="oldestToNewest">oldest to newest</option>
-      <option id="alfabetical">alfabetical order</option>
-      <option id="newestTOoldest">newest to oldest</option>
-    </select>
-  </div>
-  <div class="jumbotron" id="optionDiv">
     <ul id="mainList">
       {{#each items}}
         <h2><li>{{this}}</li></h2>
       {{/each}}
     </ul>
-    <!--<form action="/addItems" method="post">-->
     <form id="update">
       <input type='hidden' name="id" value="{{id}}" id="updateid">
       <input type="text" name="newItems" id="newItems">
-      <input type="submit">
+      <button type="submit">add Item</button>
+    </form>
+    <a href="/deleteItems/{{title}}/{{id}}">
+      <button>Delete Items </button>
+   </a>
+  </div>
+  <div class="jumbotron">
+    <h4>popularity: <span id="popularity">{{popularity}}</span></h4>
+    <form id="like">
+      <input type='hidden' name="id" value="{{id}}" id="likeidInput">
+          <button type="submit" class="btn btn-primary">Like</button>
+    </form>
+    <form id="dislike">
+      <input type='hidden' name="id" value="{{id}}" id="dislikeidInput">
+          <button type="submit" class="btn btn-primary">Dislike</button>
     </form>
   </div>
-  <h4>popularity: <span id="popularity">{{popularity}}</span></h4>
-  <form id="like">
-    <input type='hidden' name="id" value="{{id}}" id="likeidInput">
-    <div class="container">
-      <button type="submit" class="btn btn-primary">Like</button>
-    </div>
-  </form>
-  <form id="dislike">
-    <input type='hidden' name="id" value="{{id}}" id="dislikeidInput">
-    <div class="container">
-      <button type="submit" class="btn btn-primary">Dislike</button>
-    </div>
-  </form>
-  <form id="comment">
-    <input type='hidden' name="id" value="{{id}}" id="commentid">
-    <textarea type="text" name="comment" id="thecomment">
-    </textarea>
-    <button type="submit">Submit Comment</button>
-  </form>
-  <div class="jumbotron" id="commentBox">
+  <div class="jumbotron">
+    <form id="comment">
+      <input type='hidden' name="id" value="{{id}}" id="commentid">
+      <textarea type="text" name="comment" id="thecomment">
+      </textarea><br>
+      <button type="submit">Comment</button>
+    </form>
     {{#each comments}}
-      <p>{{this}}</p>
+        <p>{{this}}</p>
     {{/each}}
   </div>
  </div>
- <h4>if you have an acount</h4>
- <a href="/deleteItems">
-   <button>Delete Items </button>
-</a>
  <script src="/js/listFormating.js"></script>
  <script src="/js/actions.js"></script>

@@ -4,6 +4,7 @@ const ValidationError = mongoose.Error.ValidationError;
 const ValidatorError  = mongoose.Error.ValidatorError;
 const comments = require('../models/comments');
 const text = require('../text')
+const flash = require('connect-flash');
 
 const listSchema = mongoose.Schema({
   title: {
@@ -18,19 +19,12 @@ const listSchema = mongoose.Schema({
 const List = mongoose.model('List', listSchema);
 
 let used = false;
-
-function redirect(req, res) {
-  res.redirect('/addList')
-}
-
 let session;
 
 exports.addPage = function(req, res) {
   if(session) {
     res.render('addList',{title: session.title, about: session.about,
       items: session.items, warning: text.textWarning});
-    console.log(req.flash('titleWarning'));
-    console.log(session.items);
   }
   else {
     res.render('addList');
@@ -54,8 +48,7 @@ exports.create = function(req, res) {
 
   List.findOne({title: userList.title}, 'title', function(err, title) {
     if(err) {
-      res.redirect('500');
-      console.error(err);
+      throw err;
     }
     else if(title) {
       res.redirect('/addList')
@@ -63,8 +56,7 @@ exports.create = function(req, res) {
     else {
       userList.save(function(err, userList) {
         if (err) {
-          res.redirect('500');
-          console.error(err);
+          return next(err);
         } else {
           req.session.destroy();
           title = userList.title;
@@ -76,7 +68,7 @@ exports.create = function(req, res) {
   });
 }
 
-exports.listOflists = function(req, res) {
+exports.listOflists = function(req, res, next) {
   let query = {}
   let search = req.body.search;
 
@@ -86,8 +78,7 @@ exports.listOflists = function(req, res) {
 
   List.find(query, function(err, all) {
     if(err) {
-      console.err('err')
-      res.redirect('/500')
+      throw err;
     }
     else {
       res.render('listOflists',{
@@ -99,18 +90,13 @@ exports.listOflists = function(req, res) {
   });
 }
 
-exports.searchFound = function(req, res) {
-  res.render('search');
-}
-
 exports.get = function(req, res) {
   let title = req.params.title;
   let id = req.params.id;
 
   List.findById(id, function(err, list) {
     if(err) {
-      res.redirect('500');
-      console.error(err);
+      throw err;
     }
     else {
       res.render('list', {
@@ -124,10 +110,7 @@ exports.get = function(req, res) {
       const listItems = list.items;
       async.forEach(listItems, function(err, listItems) {
         if(err) {
-          console.error(err);
-        }
-        else {
-          console.log(listItems);
+          return next(err);
         }
       });
     }
@@ -136,15 +119,13 @@ exports.get = function(req, res) {
 
 exports.like = function(req, res) {
   let id = req.body.id;
-  console.log(id);
-  console.log("panda");
   let query = {"_id":id};
   let update ={$inc:{popularity:1}};
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
-    if(err)
-      return console.error(err);
-    //console.log(update);
+    if(err) {
+      throw err;
+    }
     res.redirect('/list/'+ update.title + '/'+ id);
   });
 }
@@ -156,21 +137,21 @@ exports.dislike = function(req, res) {
   let update ={$inc:{popularity:-1}};
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
-    if(err)
-      return console.error(err);
+    if(err) {
+      throw err;
+    }
     res.redirect('/list/' + update.title + '/' + id);
   });
 }
 
 exports.update = function(req, res) {
   let id = req.body.id;
-  console.log(id);
   let query = {"_id":id};
   let update = {$push:{items:req.body.newItems}};
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err) {
-      return console.error(err);
+      throw err;
     }
     res.redirect("/list/"+update.title+'/'+id);
   });
@@ -179,37 +160,63 @@ exports.update = function(req, res) {
 exports.comment = function(req, res) {
   let id = req.body.id;
   let comment = req.body.comment;
-  console.log(id);
-
   let query = {"_id":id};
   let update = {$push:{comments:req.body.comment}};
-  console.log(update);
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
+    console.log("panda")
     if(err)  {
-        return console.error(err);
+      return next(err);
     }
-    console.log()
-    res.redirect("/list/" + update.title + '/' +id);
-    //res.redirect('/');
+    res.redirect("/list/" + update.fsadfdsa + '/' +id);
   });
 }
 
-/*exports.delete = function(req, res) {
+exports.getDelete = function(req, res) {
+  let id = req.params.id;
+  let title = req.params.title;
 
-
-  let query = {"_id":id};
-  let update = {$pull:{'items':{title:"test title"}}}
-  List.findOneAndUpdate(query, update, {new: true}, function(err, remove) {
-    if(err)
-      return console.error(err);
-    else {
-      res.redirect("/list/"+id)
+  List.findById(id, function(err, list) {
+    if(err) {
+      throw err;
     }
-  })
-}*/
+    else {
+      res.render('delete', {
+        title: list.title,
+        items: list.items,
+        id:list.id
+      });
+      const listItems = list.items;
+      async.forEach(listItems, function(err, listItems) {
+        if(err) {
+          return next(err);
+        }
+      });
+    }
+  });
+}
+
+exports.delete = function(req, res) {
+  let id = req.body.id;
+  let item = req.body.deleteItem;
+  let query = {"_id":id};
+  let update = {$pull:{'items':item}};
+  let title = req.body.title;
+  List.findOneAndUpdate(query, update, {new: true}, function(err, remove) {
+    if(err) {
+      throw err;
+    }
+    else {
+      res.redirect("/list/"+title+"/"+id)
+    }
+    next();
+  });
+}
 
 exports.home = function(req, res) {
   List.find({}).sort({'popularity':-1}).limit(10).exec(function(err, data) {
+    if(err) {
+      throw err;
+    }
     res.render('home',{
       id:data.id,
       title:data.title,

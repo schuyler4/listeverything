@@ -1,0 +1,16 @@
+<div class="container">
+  <div class="jumbotron">
+    <h4> type in the name of the item you want to delete </h4>
+    <form action="/delete" method="post">
+      <input type='hidden' name="id" value="{{id}}">
+      <input type='hidden' name="title" value="{{title}}">
+      <input type="text" name="deleteItem">
+      <button type="submit">delete</button>
+    </form>
+      <ul id="mainList">
+        {{#each items}}
+          <h2><li>{{this}}</li></h2>
+        {{/each}}
+      </ul>
+  </div>
+</div>

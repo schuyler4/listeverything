@@ -6,6 +6,11 @@
       <h4>password: <input type="text" name="password"></h4>
       <input type="submit">
     </form>
+    {{#if message}}
+      <div class="alert alert-danger">
+        {{message}}
+      </div>
+    {{/if}}
   </div>
   You olnly need an account, if you plan on deleting items from lists.
 </div>

@@ -8,6 +8,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const express = require('express');
 const app = express();
+
 app.disable('x-powered-by');
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -19,6 +20,11 @@ mongoose.connect(secret.url, function(err) {
   if(err) {
     console.error(err);
   }
+});
+
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('500');
 });
 
 app.use(express.static('public'));
