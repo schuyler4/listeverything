@@ -1,3 +1,4 @@
-#ignore packages installed by npm 
+#ignore packages installed by npm
 secret.js
 .DS_Store
+node_modules

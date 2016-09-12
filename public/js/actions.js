@@ -47,8 +47,9 @@ $("#comment").submit(function(e) {
       console.log("error");
     }
   });
+  console.log("panda");
   let text = $('#thecomment').val();
-  $('#commentBox').append('<p>' + text + '</p>');
+  $('<p>' + text + '</p>').insertAfter($("#commentForm"));
   $('#thecomment').val('');
 });
 

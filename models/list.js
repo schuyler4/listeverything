@@ -48,7 +48,7 @@ exports.create = function(req, res) {
 
   List.findOne({title: userList.title}, 'title', function(err, title) {
     if(err) {
-      throw err;
+      console.error(err);
     }
     else if(title) {
       res.redirect('/addList')
@@ -56,7 +56,7 @@ exports.create = function(req, res) {
     else {
       userList.save(function(err, userList) {
         if (err) {
-          return next(err);
+          console.error(err);
         } else {
           req.session.destroy();
           title = userList.title;
@@ -78,7 +78,7 @@ exports.listOflists = function(req, res, next) {
 
   List.find(query, function(err, all) {
     if(err) {
-      throw err;
+      console.error(err);
     }
     else {
       res.render('listOflists',{
@@ -96,7 +96,7 @@ exports.get = function(req, res) {
 
   List.findById(id, function(err, list) {
     if(err) {
-      throw err;
+      console.error(err);
     }
     else {
       res.render('list', {
@@ -110,10 +110,16 @@ exports.get = function(req, res) {
       const listItems = list.items;
       async.forEach(listItems, function(err, listItems) {
         if(err) {
-          return next(err);
+          console.error(err);
         }
       });
     }
+  });
+  List.findById(id).select('comments').sort({date:1}).exec(function(err, comments) {
+    if(err) {
+      console.error(err);
+    }
+    console.log(comments);
   });
 }
 
@@ -124,7 +130,7 @@ exports.like = function(req, res) {
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err) {
-      throw err;
+      console.error(err);
     }
     res.redirect('/list/'+ update.title + '/'+ id);
   });
@@ -138,7 +144,7 @@ exports.dislike = function(req, res) {
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err) {
-      throw err;
+      console.error(err);
     }
     res.redirect('/list/' + update.title + '/' + id);
   });
@@ -151,7 +157,7 @@ exports.update = function(req, res) {
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
     if(err) {
-      throw err;
+      console.error(err);
     }
     res.redirect("/list/"+update.title+'/'+id);
   });
@@ -163,9 +169,8 @@ exports.comment = function(req, res) {
   let query = {"_id":id};
   let update = {$push:{comments:req.body.comment}};
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
-    console.log("panda")
     if(err)  {
-      return next(err);
+      console.error(err);
     }
     res.redirect("/list/" + update.fsadfdsa + '/' +id);
   });
@@ -177,7 +182,7 @@ exports.getDelete = function(req, res) {
 
   List.findById(id, function(err, list) {
     if(err) {
-      throw err;
+      console.error(err);
     }
     else {
       res.render('delete', {
@@ -188,7 +193,7 @@ exports.getDelete = function(req, res) {
       const listItems = list.items;
       async.forEach(listItems, function(err, listItems) {
         if(err) {
-          return next(err);
+          console.error(err);
         }
       });
     }
@@ -203,19 +208,18 @@ exports.delete = function(req, res) {
   let title = req.body.title;
   List.findOneAndUpdate(query, update, {new: true}, function(err, remove) {
     if(err) {
-      throw err;
+      console.error(err);
     }
     else {
       res.redirect("/list/"+title+"/"+id)
     }
-    next();
   });
 }
 
 exports.home = function(req, res) {
   List.find({}).sort({'popularity':-1}).limit(10).exec(function(err, data) {
     if(err) {
-      throw err;
+      console.error(err);
     }
     res.render('home',{
       id:data.id,

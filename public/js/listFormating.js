@@ -27,7 +27,6 @@ let listItems = list.children('li').get();
 let changed = false;
 $(document.body).on('change', arrangeSelector, function(e) {
   let optVal= $("#arrangeSelector option:selected").val();
-  console.log(optVal);
   if(optVal == 'newest to oldest') {
     if(!changed) {
       list.children().each(function(i,li) {
@@ -51,4 +50,9 @@ $(document.body).on('change', arrangeSelector, function(e) {
       }).appendTo(list);
     });
   }
+});
+
+$('div > p').each(function() {
+  console.log("panda");
+  $(this).insertAfter($("#commentForm"));
 });

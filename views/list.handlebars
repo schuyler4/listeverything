@@ -31,16 +31,20 @@
           <button type="submit" class="btn btn-primary">Dislike</button>
     </form>
   </div>
-  <div class="jumbotron">
-    <form id="comment">
-      <input type='hidden' name="id" value="{{id}}" id="commentid">
-      <textarea type="text" name="comment" id="thecomment">
-      </textarea><br>
-      <button type="submit">Comment</button>
-    </form>
-    {{#each comments}}
-        <p>{{this}}</p>
-    {{/each}}
+  <div class="jumbotron" id="commentBox">
+    <div id="commentForm">
+      <form id="comment">
+        <input type='hidden' name="id" value="{{id}}" id="commentid">
+        <textarea type="text" name="comment" id="thecomment">
+        </textarea><br>
+        <button type="submit">Comment</button>
+      </form>
+    </div>
+    <div id="commentStream">
+      {{#each comments}}
+          <p id="aComment">{{this}}</p>
+      {{/each}}
+    </div>
   </div>
  </div>
  <script src="/js/listFormating.js"></script>
