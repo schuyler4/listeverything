@@ -19,6 +19,7 @@ mongoose.Promise = global.Promise;
 mongoose.connect(secret.url, function(err) {
   if(err) {
     console.error(err);
+    console.log("panda");
   }
 });
 
