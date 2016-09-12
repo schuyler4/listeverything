@@ -16,7 +16,7 @@ app.set('view engine', 'handlebars');
 
 const secret = require('./secret.js');
 mongoose.Promise = global.Promise;
-mongoose.connect(secret.url, function(err) {
+mongoose.connect(process.env.MONGOLAB_URI, function(err) {
   if(err) {
     console.error(err);
     console.log("panda");
