@@ -1,3 +1,6 @@
+if(process.env.NODE_ENV != 'production') {
+  require('dotenv').config()
+}
 const mongoose = require('mongoose');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
@@ -16,7 +19,7 @@ app.set('view engine', 'handlebars');
 
 const secret = require('./secret.js');
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGOLAB_URI, function(err) {
+mongoose.connect(process.env.MONGO_URL, function(err) {
   if(err) {
     console.error(err);
     console.log("panda");
@@ -34,7 +37,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.use(cookieParser(secret.cookieSecret));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use(session({
   secret: secret.cookieSecret,

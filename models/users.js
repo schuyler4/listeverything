@@ -55,7 +55,7 @@ passport.use('signup', new LocalStrategy({
     findOrCreateUser = function(){
       User.findOne({'username':username},function(err, user) {
         if (err){
-          throw err;  
+          throw err;
           return done(err);
         }
         if (user) {
@@ -88,9 +88,11 @@ exports.login = function(req, res, next) {
 
 
 exports.isLoggedIn = function(req, res, next) {
-  if (req.isAuthenticated())
+  console.log("req is authenticated")
+  if (req.isAuthenticated()) {
+        console.log("in");
         return next();
-  else {
+  } else {
     res.redirect('/login');
   }
 }
