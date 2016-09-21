@@ -17,7 +17,6 @@ app.disable('x-powered-by');
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-const secret = require('./secret.js');
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGO_URL, function(err) {
   if(err) {
