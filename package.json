@@ -4,7 +4,7 @@
   "description": "this is a website were people create lists",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",  
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
   "repository": {
@@ -42,5 +42,8 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-http": "^3.0.0"
+  },
+  "engines": {
+    "node": "6.3.0"
   }
 }
