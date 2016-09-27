@@ -33,11 +33,6 @@ exports.addPage = function(req, res) {
 
 exports.create = function(req, res) {
 
-  session = req.session;
-  session.title = req.body.title;
-  session.about = req.body.about;
-  session.items = req.body.items;
-
   let userList = new List({
     title: req.body.title,
     about: req.body.about,
@@ -58,7 +53,6 @@ exports.create = function(req, res) {
         if (err) {
           console.error(err);
         } else {
-          req.session.destroy();
           title = userList.title;
           id = userList.id;
           res.redirect('/list/' + title + '/' + id);
@@ -108,11 +102,6 @@ exports.get = function(req, res) {
         id:list.id
       });
       const listItems = list.items;
-      async.forEach(listItems, function(err, listItems) {
-        if(err) {
-          console.error(err);
-        }
-      });
     }
   });
   List.findById(id).select('comments').sort({date:1}).exec(function(err, comments) {
@@ -124,16 +113,19 @@ exports.get = function(req, res) {
 }
 
 exports.like = function(req, res) {
-  let id = req.body.id;
-  let query = {"_id":id};
-  let update ={$inc:{popularity:1}};
+  if(!req.session.liked) {
+    let id = req.body.id;
+    let query = {"_id":id};
+    let update ={$inc:{popularity:1}};
 
-  List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
-    if(err) {
-      console.error(err);
-    }
-    res.redirect('/list/'+ update.title + '/'+ id);
-  });
+    List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
+      if(err) {
+        console.error(err);
+      }
+      req.session.liked = true
+      res.redirect('/list/'+ update.title + '/'+ id);
+    });
+  }
 }
 
 exports.dislike = function(req, res) {
@@ -156,6 +148,7 @@ exports.update = function(req, res) {
   let update = {$push:{items:req.body.newItems}};
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
+    console.log(update)
     if(err) {
       console.error(err);
     }

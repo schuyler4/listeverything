@@ -1,9 +1,10 @@
 <div class="container">
   <div class="jumbotron">
     <h1> Sign Up </h1>
-    <form actoin="/login", method="post">
+    <form action="/signup", method="post">
       <h4>username: <input type="text" name="username"></h4>
       <h4>password: <input type="password" name="password"></h4>
+      <h4>retype password: <input type="password" name="retypePassword">
       <input type="submit">
     </form>
     {{#if message}}

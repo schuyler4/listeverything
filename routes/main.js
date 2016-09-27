@@ -26,27 +26,11 @@ module.exports = function(app) {
   app.post('/comment', list.comment);
   app.post('/addItems', list.update);
 
-  //app.get('/deleteItems/:title/:id', user.isLoggedIn, list.getDelete);
-  //app.post('/delete', list.delete);
+  app.get('/deleteItems/:title/:id', list.getDelete);
+  app.post('/delete', list.delete);
 
-  app.get('/login', user.login);
-  app.post('/login', passport.authenticate('login', {
-    successRedirect:'/',
-    failureRedirect:'/login',
-    failureFlash: true
-  }));
-  app.get('/logout', function(req, res) {
-    if(user.isLoggedIn) {
-      req.logout();
-    }
-    res.redirect('/');
-  })
-  app.get('/signUp', user.signup);
-  app.post('/signup', passport.authenticate('signup', {
-    successRedirect: '/',
-    failureRedirect: '/signup',
-    failureFlash: true,
-  }));
+  app.get('/signup',  user.getSignup);
+  app.post('/signup', user.postSignup)
 
   app.get('*', function(req, res){
     res.render('404');
