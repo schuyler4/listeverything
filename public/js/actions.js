@@ -55,18 +55,23 @@ $("#comment").submit(function(e) {
 
 $('#update').submit(function(e) {
   e.preventDefault();
-  $.ajax({
-    type: "POST",
-    url: "/addItems",
-    data: {id: $("#updateid").val(),newItems: $('#newItems').val()},
-    succsess: function(id) {
-      console.log("succsess");
-    },
-    error: function () {
-      console.log("error");
-    }
-  });
-  let item = $('#newItems').val();
-  $('#mainList').append('<h2><li>' + item + '</li></h2>');
-  $("#newItems").val('');
+  if($("#updateid").val() == "") {
+    console.log("no items added")
+  }
+  else {
+    $.ajax({
+      type: "POST",
+      url: "/addItems",
+      data: {id: $("#updateid").val(),newItems: $('#newItems').val()},
+      succsess: function(id) {
+        console.log("succsess");
+      },
+      error: function () {
+        console.log("error");
+      }
+    });
+    let item = $('#newItems').val();
+    $('#mainList').append('<h2><li>' + item + '</li></h2>');
+    $("#newItems").val('');
+  }
 });

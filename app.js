@@ -18,12 +18,22 @@ app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 mongoose.Promise = global.Promise;
+
 mongoose.connect(process.env.MONGO_URL, function(err) {
   if(err) {
     console.error(err);
-    console.log("panda");
   }
 });
+app.use(session({
+  secret: process.env.COOKIE_SECRET || secret,
+  cookie: {maxAge: 60 * 60 * 1000},
+  resave: true,
+  saveUninitialized: true,
+}));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
@@ -35,18 +45,6 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
-
-app.use(cookieParser(process.env.COOKIE_SECRET));
-
-app.use(session({
-  secret: process.env.COOKIE_SECRET,
-  cookie: {maxAge: 60 * 60 * 1000},
-  resave: true,
-  saveUninitialized: true,
-}));
-app.use(flash());
-app.use(passport.initialize());
-app.use(passport.session());
 
 require('./routes/main')(app);
 
