@@ -1,3 +1,4 @@
+'use strict'
 const mongoose = require('mongoose');
 const async = require('async');
 const ValidationError = mongoose.Error.ValidationError;
@@ -156,6 +157,7 @@ exports.update = function(req, res) {
   });
 }
 
+
 exports.comment = function(req, res) {
   let id = req.body.id;
   let comment = req.body.comment;
@@ -169,44 +171,54 @@ exports.comment = function(req, res) {
   });
 }
 
-exports.getDelete = function(req, res) {
-  let id = req.params.id;
-  let title = req.params.title;
+const user = require('../models/users')
 
-  List.findById(id, function(err, list) {
-    if(err) {
-      console.error(err);
-    }
-    else {
-      res.render('delete', {
-        title: list.title,
-        items: list.items,
-        id:list.id
-      });
-      const listItems = list.items;
-      async.forEach(listItems, function(err, listItems) {
-        if(err) {
-          console.error(err);
-        }
-      });
-    }
-  });
+exports.getDelete = function(req, res) {
+  console.log("panda")
+  console.log(req.session.loggedIn)
+  if(user.isLoggedIn) {
+    let id = req.params.id;
+    let title = req.params.title;
+
+    List.findById(id, function(err, list) {
+      if(err) {
+        console.error(err);
+      }
+      else {
+        res.render('delete', {
+          title: list.title,
+          items: list.items,
+          id:list.id
+        });
+        const listItems = list.items;
+        async.forEach(listItems, function(err, listItems) {
+          if(err) {
+            console.error(err);
+          }
+        });
+      }
+    });
+  }
 }
 
-exports.delete = function(req, res) {
-  let id = req.body.id;
-  let item = req.body.deleteItem;
-  let query = {"_id":id};
-  let update = {$pull:{'items':item}};
-  let title = req.body.title;
-  List.findOneAndUpdate(query, update, {new: true}, function(err, remove) {
-    if(err) {
-      console.error(err);
-    }
-    else {
+exports.postDelete = function(req, res) {
+  console.log(user.isLoggedIn)
+  if (user.isLoggedIn) {
+    let id = req.body.id;
+    let item = req.body.deleteItem;
+    let query = {"_id":id};
+    let update = {$pull:{'items':item}};
+    let title = req.body.title;
+    List.findOneAndUpdate(query, update, {new: true}, function(err, remove) {
+      if(err) {
+        console.error(err);
+      }
       res.redirect("/list/"+title+"/"+id)
-    }
-  });
+    });
+  }
+  else {
+    res.redirect("/login")
+  }
 }
 
 exports.home = function(req, res) {
