@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser')
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt-nodejs');
 const express = require('express');
 const app = express();
 

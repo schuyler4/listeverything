@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
 'use strict'
-const bcrypt = require('bcrypt');
-const flash = require('connect-flash')
-
-const saltRounds = 10;
-
+const mongoose = require('mongoose');
+const flash = require('connect-flash');
+//const bcrypt = require('bcrypt-nodejs');
+const passwordHash = require('password-hash-and-salt')
+//salt = bcrypt.genSalt(process.env.SALT);
 
 const userSchma = mongoose.Schema({
   username: {type: String},
@@ -24,27 +23,35 @@ exports.postSignup = function(req, res) {
     }
     if(req.body.password == req.body.retypePassword && username == null) {
       let password = req.body.password;
-      bcrypt.genSalt(process.env.SALT, function(err, salt) {
+      
+      if(err) {
+        console.error(err);
+      } else {
         if(err) {
-          console.error(err);
+          console.err(err)
         } else {
-          bcrypt.hash(password, salt, function(err, hash) {
-            if(err) {
-              console.err(err)
-            } else {
-              password = hash;
-            }
-          })
+          passwordHash(password).hash(function(err, hash) {
+              if(err) {
+                console.error(err);
+              } else {
+                let newUser = new User({
+                  username: req.body.username,
+                  password: hash
+                });
+                newUser.save(function(err, save) {
+                  if(err) {
+                    console.error(err);
+                  }
+                });
+                console.log("panda");
+              }
+          });
         }
-      })
-      var new_user = User({
-        username: req.body.username,
-        password: password
-      })
+      }
       req.session.loggedin = true;
       res.redirect('/');
     }
-    else if(username == null) {
+    else if(username != null) {
       req.flash("signupErr","that username has alredy been taken")
       res.redirect('/signup')
     }
@@ -60,23 +67,29 @@ exports.getLogin = function(req, res, next) {
 }
 
 exports.postLogin = function(req, res) {
-  username = req.body.username
-  password = req.body.password
-  User.find({}, function(err, password) {
-    console.log(password);
-    //bcrypt.compare(password);
-  });
-  User.find({username: username, password:password}, function(err, user) {
+  let username = req.body.username
+  let password = req.body.password
+  User.findOne({username: username}, function(err, user) {
     if(err) {
       console.err(err)
     }
     if(user) {
-      req.session.loggedin = true
-      res.redirect('/')
-    }
-    else {
-      req.flash('loginErr','your username or password is incorect')
-      res.redirect('/login')
+      passwordHash(password).verifyAgainst(user.password, function(err, verified) {
+        if(err) {
+          console.error(err)
+        }
+        if(!verified) {
+          req.flash('loginErr', 'your username or password is incorect');
+          res.redirect('/login')
+        } else {
+          req.session.loggedin = true
+          res.redirect('/')
+        }
+      });
+    } else {
+      console.log("monkey")
+      req.flash('loginErr', 'your username or password is incorect');
+      res.redirect('/login');
     }
   });
 }
