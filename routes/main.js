@@ -27,10 +27,14 @@ module.exports = function(app) {
   app.post('/addItems', list.update);
 
   app.get('/deleteItems/:title/:id', list.getDelete);
-  app.post('/delete', list.delete);
+  app.post('/delete', list.postDelete);
 
   app.get('/signup',  user.getSignup);
-  app.post('/signup', user.postSignup)
+  app.post('/signup', user.postSignup);
+
+  app.get('/login', user.getLogin);
+  app.post('/login', user.postLogin);
+  app.get('/logout', user.logout);
 
   app.get('*', function(req, res){
     res.render('404');
