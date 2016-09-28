@@ -39,5 +39,10 @@
       <button type="button" id="removeListButton">never mind</button>
       <input type="submit">
     </form>
+    {{#if message}}
+      <div class="alert alert-danger">
+        {{message}}
+      </div>
+    {{/if}}
   </div>
 </div>

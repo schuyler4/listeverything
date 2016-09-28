@@ -5,7 +5,6 @@ const flash = require('connect-flash');
 
 module.exports = function(app) {
   const list = require('../models/list')
-  const comment = require('../models/comments')
   const user = require('../models/users')
 
   app.get('/500', function(req, res) {
@@ -14,8 +13,8 @@ module.exports = function(app) {
 
   app.get('/', list.home)
 
-  app.get('/addList', list.addPage);
-  app.post('/addList', list.create);
+  app.get('/addList', list.getAddList);
+  app.post('/addList', list.postAddList);
 
   app.get('/listOflists', list.listOflists);
   app.post('/listOflists', list.listOflists);
@@ -26,7 +25,7 @@ module.exports = function(app) {
   app.post('/comment', list.comment);
   app.post('/addItems', list.update);
 
-  app.get('/deleteItems/:title/:id', list.getDelete);
+  app.get('/deleteItems/:title/:id', user.isLoggedIn ,list.getDelete);
   app.post('/delete', list.postDelete);
 
   app.get('/signup',  user.getSignup);

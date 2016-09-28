@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const async = require('async');
 const ValidationError = mongoose.Error.ValidationError;
 const ValidatorError  = mongoose.Error.ValidatorError;
-const comments = require('../models/comments');
 const text = require('../text')
 const flash = require('connect-flash');
 
@@ -22,18 +21,11 @@ const List = mongoose.model('List', listSchema);
 let used = false;
 let session;
 
-exports.addPage = function(req, res) {
-  if(session) {
-    res.render('addList',{title: session.title, about: session.about,
-      items: session.items, warning: text.textWarning});
-  }
-  else {
-    res.render('addList');
-  }
+exports.getAddList = function(req, res) {
+    res.render('addList', {message: req.flash('listCreationError')});
 }
 
-exports.create = function(req, res) {
-
+exports.postAddList = function(req, res) {
   let userList = new List({
     title: req.body.title,
     about: req.body.about,
@@ -41,22 +33,29 @@ exports.create = function(req, res) {
     popularity: 1,
     comments:[]
   })
+  let listTitle = req.body.title
+  let listItems = req.body.items
 
   List.findOne({title: userList.title}, 'title', function(err, title) {
     if(err) {
       console.error(err);
     }
     else if(title) {
-      res.redirect('/addList')
+      req.flash('listCreationError',
+      'the title for this list already exists here');
+      res.redirect('/addList');
+    }
+    else if(!listTitle || !listItems) {
+      req.flash('listCreationError',
+      'you dident include a title or items in your list');
+      res.redirect('/addList');
     }
     else {
       userList.save(function(err, userList) {
         if (err) {
           console.error(err);
         } else {
-          title = userList.title;
-          id = userList.id;
-          res.redirect('/list/' + title + '/' + id);
+          res.redirect('/list/' + userList.title + '/' + userList.id);
         }
       });
     }
@@ -174,9 +173,8 @@ exports.comment = function(req, res) {
 const user = require('../models/users')
 
 exports.getDelete = function(req, res) {
-  console.log("panda")
-  console.log(req.session.loggedIn)
   if(user.isLoggedIn) {
+    console.log(user.isLoggedIn)
     let id = req.params.id;
     let title = req.params.title;
 
@@ -198,6 +196,9 @@ exports.getDelete = function(req, res) {
         });
       }
     });
+  }
+  else {
+    res.redirect('/login')
   }
 }
 
