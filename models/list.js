@@ -6,16 +6,25 @@ const ValidatorError  = mongoose.Error.ValidatorError;
 const text = require('../text')
 const flash = require('connect-flash');
 
+const subList = require('../models/users');
+
+const itemSchema = mongoose.Schema({
+  content: String,
+  subList: mongoose.Schema.Types.ObjectId,
+  list: mongoose.Schema.Types.ObjectId
+});
+
 const listSchema = mongoose.Schema({
   title: {
     type: String,
   },
   about: String,
-  items: [String],
+  items: [mongoose.Schema.Types.ObjectId],
   popularity: Number,
   comments:[String]
 });
 
+const Item = mongoose.model('Item', itemSchema);
 const List = mongoose.model('List', listSchema);
 
 let used = false;
@@ -29,12 +38,24 @@ exports.postAddList = function(req, res) {
   let userList = new List({
     title: req.body.title,
     about: req.body.about,
-    items: req.body.items,
     popularity: 1,
     comments:[]
-  })
-  let listTitle = req.body.title
-  let listItems = req.body.items
+  });
+
+  let data;
+  let i;
+  let newObjectArray = []
+  for(i=0; i < object.item.length, i++) {
+    newObjectArray.push({})
+  }
+
+  let userListItem = new Item({
+    content: req.body.items,
+    list: userList.id
+  });
+
+  let listTitle = userList.title;
+  let listItems = userListItem.content;
 
   List.findOne({title: userList.title}, 'title', function(err, title) {
     if(err) {
@@ -85,7 +106,7 @@ exports.listOflists = function(req, res, next) {
 }
 
 exports.getList = function(req, res) {
-  let title = req.params.title;
+  let urlTitle = req.params.title;
   let id = req.params.id;
 
   List.findById(id, function(err, list) {
@@ -93,15 +114,20 @@ exports.getList = function(req, res) {
       console.error(err);
     }
     else {
-      res.render('list', {
-        title: list.title,
-        about: list.about,
-        items: list.items,
-        popularity: list.popularity,
-        comments: list.comments,
-        id:list.id
-      });
-      const listItems = list.items;
+      if(list) {
+        res.render('list', {
+          title: list.title,
+          about: list.about,
+          items: list.items,
+          popularity: list.popularity,
+          comments: list.comments,
+          id:list.id
+        });
+        const listItems = list.items;
+      }
+      else {
+        res.redirect('/');
+      }
     }
   });
   List.findById(id).select('comments').sort({date:1}).exec(function(err, comments) {
