@@ -1,9 +1,8 @@
 'use strict'
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
-//const bcrypt = require('bcrypt-nodejs');
 const passwordHash = require('password-hash-and-salt')
-//salt = bcrypt.genSalt(process.env.SALT);
+
 
 const userSchma = mongoose.Schema({
   username: {type: String},
@@ -23,7 +22,7 @@ exports.postSignup = function(req, res) {
     }
     if(req.body.password == req.body.retypePassword && username == null) {
       let password = req.body.password;
-      
+
       if(err) {
         console.error(err);
       } else {

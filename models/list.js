@@ -84,7 +84,7 @@ exports.listOflists = function(req, res, next) {
   });
 }
 
-exports.get = function(req, res) {
+exports.getList = function(req, res) {
   let title = req.params.title;
   let id = req.params.id;
 
@@ -108,7 +108,6 @@ exports.get = function(req, res) {
     if(err) {
       console.error(err);
     }
-    console.log(comments);
   });
 }
 
@@ -148,7 +147,6 @@ exports.update = function(req, res) {
   let update = {$push:{items:req.body.newItems}};
 
   List.findOneAndUpdate(query, update, {new: true}, function(err, update) {
-    console.log(update)
     if(err) {
       console.error(err);
     }
@@ -174,7 +172,6 @@ const user = require('../models/users')
 
 exports.getDelete = function(req, res) {
   if(user.isLoggedIn) {
-    console.log(user.isLoggedIn)
     let id = req.params.id;
     let title = req.params.title;
 
@@ -203,7 +200,6 @@ exports.getDelete = function(req, res) {
 }
 
 exports.postDelete = function(req, res) {
-  console.log(user.isLoggedIn)
   if (user.isLoggedIn) {
     let id = req.body.id;
     let item = req.body.deleteItem;

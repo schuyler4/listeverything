@@ -19,7 +19,7 @@ module.exports = function(app) {
   app.get('/listOflists', list.listOflists);
   app.post('/listOflists', list.listOflists);
 
-  app.get('/list/:title/:id', list.get);
+  app.get('/list/:title/:id', list.getList);
   app.post('/like', list.like);
   app.post('/dislike', list.dislike);
   app.post('/comment', list.comment);
